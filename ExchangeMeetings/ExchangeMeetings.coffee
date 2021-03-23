@@ -89,7 +89,7 @@ update: (output, domEl) ->
       else
         html += mtg.subject
 
-      html += " " + dt.toLocaleTimeString().replace /:00 /, " "
+      html += " " + dt.toLocaleTimeString().replace /:[0-9]+$/, " "
       if eventcolor == 'next'
          # show time until on next meeting
          mins = Math.round(delta/60000)
