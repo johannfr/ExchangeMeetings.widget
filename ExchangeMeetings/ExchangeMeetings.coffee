@@ -84,12 +84,12 @@ update: (output, domEl) ->
       html += "<span class='" + eventcolor + "'>"
       if url != null
         html += "<a href='" + url += "'>"
+      html += dt.toLocaleTimeString().replace /:[0-9]+$/, " " + " - "
       if mtg.subject.length > 35
         html += mtg.subject.substr(0,32) + "..."
       else
         html += mtg.subject
 
-      html += " " + dt.toLocaleTimeString().replace /:[0-9]+$/, " "
       if eventcolor == 'next'
          # show time until on next meeting
          mins = Math.round(delta/60000)
@@ -104,7 +104,7 @@ update: (output, domEl) ->
       # if your exchange server includes extra info such as userid or contract company in names, uncomment this to clean it up a bit
       # organizer = mtg.organizer.match(/([A-Za-z ]+)\s/ig)
       # html += organizer[0].replace /\s+$/g, "" + ', ' + duration + " mins, "
-      html += mtg.organizer + ', ' + duration + " mins, "
+      html += "&nbsp;" + mtg.organizer + ', ' + duration + " mins, "
       if mtg.required_attendees.length > 0
         html += mtg.required_attendees.length + " required"
       if mtg.optional_attendees.length > 0
@@ -120,7 +120,7 @@ update: (output, domEl) ->
 # CSS Style
 style: """
   margin:0
-  padding:0px
+  padding:4px
   left:10px
   top: 150px
   background:rgba(#fff, .15)
