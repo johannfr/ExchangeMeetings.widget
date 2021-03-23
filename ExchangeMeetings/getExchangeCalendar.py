@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from icecream import ic
 import json
 import os
 from pprint import pprint
@@ -49,9 +50,12 @@ def fetch_from_exchange(days, config):
         tz = a.default_timezone
     except:
         tz = EWSTimeZone.timezone(config["tz"])
-    start = a.default_timezone.localize(EWSDateTime(today.year, today.month, today.day))
-    end = a.default_timezone.localize(
-        EWSDateTime(tomorrow.year, tomorrow.month, tomorrow.day)
+
+    start = EWSDateTime(today.year, today.month, today.day).replace(
+        tzinfo=a.default_timezone  # Shouldn't this be "tz"?
+    )
+    end = EWSDateTime(tomorrow.year, tomorrow.month, tomorrow.day, 23, 59, 59).replace(
+        tzinfo=a.default_timezone  # Shouldn't this be "tz"?
     )
     items = a.calendar.view(start=start, end=end).only(
         "uid",
