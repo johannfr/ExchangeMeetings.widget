@@ -11,8 +11,7 @@
 command: "source ExchangeMeetings/venv/bin/activate; python3 ExchangeMeetings/getExchangeCalendar.py"
 
 # Set the refresh frequency (milliseconds).
-refreshFrequency: 300000
-refreshFrequency: 300
+refreshFrequency: 30000
 
 # Render the output.
 render: (output) -> """
@@ -76,10 +75,7 @@ update: (output, domEl) ->
 
       if mtg.cancelled
         html += " <li class='past'>"
-      if mtg.webex.url != null and eventcolor != "past"
-        html += " <li class='webex'>"
-        url = mtg.webex.url
-      else if mtg.zoom.url != null and eventcolor != "past"
+      if mtg.zoom.url != null and eventcolor != "past"
         html += " <li class='zoom'>"
         url = mtg.zoom.url
       else
@@ -165,8 +161,5 @@ style: """
 
   li.zoom
     list-style-image: url('ExchangeMeetings/icon_zoom.png')
-
-  li.webex
-    list-style-image: url('ExchangeMeetings/icon_webex.png')
 
 """
