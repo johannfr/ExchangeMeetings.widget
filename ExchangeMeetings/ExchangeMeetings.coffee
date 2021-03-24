@@ -12,10 +12,11 @@ command: "source ExchangeMeetings/venv/bin/activate; python3 ExchangeMeetings/ge
 
 # Set the refresh frequency (milliseconds).
 refreshFrequency: 30000
+refreshFrequency: 1000
 
 # Render the output.
 render: (output) -> """
-  <table id='meetings'></table>
+  <div id='meetings'></div>
 """
 
 # Update the rendered output.
@@ -23,11 +24,10 @@ update: (output, domEl) ->
   dom = $(domEl)
   days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   dowfound = [0, 0, 0, 0, 0, 0, 0, 0]
-  eventcolor = "future"
   nextfound = false  # assumes json file is already sorted by start datetime
   tomorrowfound = false
   data = JSON.parse output
-  html = "<P class='meetings'>Today</P><UL>\n"
+  html = '<p class="meetings">Today</p><ul>\n'
   cnt = 0
   limit = 8
 
@@ -36,6 +36,7 @@ update: (output, domEl) ->
   dd = today
 
   for mtg in data.meetings.slice(0,limit+1)
+    classes = []
     if cnt > limit
       html += "+ " + (data.meetings.length - cnt) + " more"
     else
@@ -51,37 +52,32 @@ update: (output, domEl) ->
         dow_num_prev = 6
       dowfound[dow_num] += 1
 
-
-#      console.log("subject " + mtg.subject)
-
       if dow_num - today.getDay() == 1 and not tomorrowfound
         if dowfound[dow_num_prev] == 0
-          html += "<li class='meetings'>None</li>"
-        html += "</UL><P class='meetings'>Tomorrow</P><UL>\n"
+          html += '<li class="meetings">None</li>'
+        html += '</ul><p class="meetings">Tomorrow</p><ul>\n'
         tomorrowfound = true
       if dowdelta > 1 and dowfound[dow_num] <= 1
         if dowfound[dow_num_prev] == 0
-          html += "<P class='meetings'>None</P>"
-        html += "</UL><P class='meetings'>" + days[dt.getDay()] + "</P><UL>"
-
+          html += '<p class="meetings">None</p>'
+        html += '</ul><p class="meetings">' + days[dt.getDay()] + "</p><ul>"
       if delta < 0
-        eventcolor = "past"
+        classes.push "past"
       else
         if !nextfound
-           eventcolor = "next"
+           classes.push "next"
            nextfound = true
         else
-           eventcolor = "future"
+           classes.push "future"
 
       if mtg.cancelled
-        html += " <li class='past'>"
-      if mtg.zoom.url != null and eventcolor != "past"
-        html += " <li class='zoom'>"
-        url = mtg.zoom.url
-      else
-        url = null
-        html += " <li class='past'>"
-      html += "<span class='" + eventcolor + "'>"
+           classes.push "cancelled"
+      if mtg.zoom.url != null
+           classes.push "zoom"
+
+      url = mtg.zoom.url
+
+      html += "<li class='" + classes.join(" ") + "'>"
       if url != null
         html += "<a href='" + url += "'>"
       html += dt.toLocaleTimeString().replace /:[0-9]+$/, " " + " - "
@@ -90,14 +86,12 @@ update: (output, domEl) ->
       else
         html += mtg.subject
 
-      if eventcolor == 'next'
+      if delta > 0
          # show time until on next meeting
          mins = Math.round(delta/60000)
          hours = Math.round(delta/360000)/10
          if hours >= 2.0
           html += " (in " + hours + " hrs)"
-         else if hours >= 2.0
-           html += " (in " + hours + " hrs)"
          else
            html += " (in " + mins + " min)"
       html += "<br>"
@@ -111,7 +105,7 @@ update: (output, domEl) ->
         html += " (" + mtg.optional_attendees.length + " optional)"
       if url != null
         html += '</a>'
-      html += "</span></li>\n";
+      html += "</li>\n";
 
 
   # Set our output.
@@ -139,10 +133,10 @@ style: """
     padding:2px
     margin:2px
 
-  .past,
+  .past
     color: rgba(#fff, .20)
     text-decoration: line-through;
-    a { color: rgba(#fff, .20); text-decoration: line-through; }
+  a { color: rgba(#fff, .20); text-decoration: line-through; }
 
   .next_cancelled
     font-weight:bold
