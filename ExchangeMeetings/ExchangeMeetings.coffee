@@ -12,7 +12,7 @@ command: "source ExchangeMeetings/venv/bin/activate; python3 ExchangeMeetings/ge
 
 # Set the refresh frequency (milliseconds).
 refreshFrequency: 30000
-refreshFrequency: 1000
+# refreshFrequency: 1000
 
 # Render the output.
 render: (output) -> """
