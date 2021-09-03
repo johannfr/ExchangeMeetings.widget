@@ -8,7 +8,8 @@
 # source ExchangeMeetings/venv/bin/activate ; pip install -r ExchangeMeetings/requirements.txt
 #--------------------------------------------------------------------------------------
 # Execute the shell command.
-command: "source ExchangeMeetings/venv/bin/activate; python3 ExchangeMeetings/getExchangeCalendar.py"
+#command: "source ExchangeMeetings/venv/bin/activate; python3 ExchangeMeetings/getExchangeCalendar.py"
+command: "cat meetings.json"
 
 # Set the refresh frequency (milliseconds).
 refreshFrequency: 30000

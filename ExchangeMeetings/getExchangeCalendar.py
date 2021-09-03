@@ -17,17 +17,11 @@ from exchangelib import (
 )  # https://github.com/ecederstrand/exchangelib
 
 days_to_fetch = 3
-cache_time_to_live = (
-    900  # cache exchange data for 15 minutes, configurable in yaml file
-)
-max_cache_age = 43200  # dont cache for more than 12 hours
 
 
 def get_config(filename):
     with open(filename) as file:
-        config = yaml.load(file, Loader=yaml.FullLoader)
-    cache_time_to_live = config["ttl"]
-    return config
+        return yaml.load(file, Loader=yaml.FullLoader)
 
 
 def main(days, filename="ExchangeMeetings/ExchangeMeetings_config.yml"):
@@ -143,23 +137,6 @@ if __name__ == "__main__":
     filename_config = "ExchangeMeetings/ExchangeMeetings_config.yml"
     filename_data = "meetings.json"
     filename_config = "ExchangeMeetings_config.yml"
-    # cache_time_to_live = 1
-    if os.path.isfile(filename_data):
-        st = os.stat(filename_data)
-        fileage = time.time() - st.st_mtime
-    else:
-        fileage = cache_time_to_live + 1
-    if fileage > cache_time_to_live:
-        try:
-            meetings = main(days_to_fetch, filename=filename_config)
-            with open(filename_data, "w") as text_file:
-                json.dump({"meetings": meetings}, text_file, indent=4)
-            pprint(meetings)
-        except Exception as e:
-            raise
-            pass  # Exchange API is unreliable, fall back to cache
-    if os.path.isfile(filename_data):
-        with open(filename_data, "r") as text_file:
-            print(text_file.read())
-    else:
-        print(json.dumps({"error": f"data file {filename_data} not found"}))
+    meetings = main(days_to_fetch, filename=filename_config)
+    with open(filename_data, "w") as text_file:
+        json.dump({"meetings": meetings}, text_file, indent=4)
